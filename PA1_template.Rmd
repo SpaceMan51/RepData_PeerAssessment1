@@ -2,7 +2,10 @@
 title: "PA1_template"
 author: "Johnny Vargas (SpaceMan51)"
 date: "Thursday, May 14, 2015"
-output: html_document
+output:
+  html_document:
+    fig_caption: yes
+    keep_md: yes
 ---
 
 ### Assignment Info:
