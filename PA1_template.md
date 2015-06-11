@@ -1,12 +1,6 @@
----
-title: "PA1_template"
-author: "Johnny Vargas (SpaceMan51)"
-date: "Thursday, May 14, 2015"
-output:
-  html_document:
-    fig_caption: yes
-    keep_md: yes
----
+# PA1_template
+Johnny Vargas (SpaceMan51)  
+Thursday, June 11, 2015  
 
 ### Assignment Info:
 This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
@@ -48,6 +42,7 @@ Show any code that is needed to
 # Load the data
 # This code requires that the raw data file exist in the working directory
 # No additional pre-processing is required for the first few steps other than ensuring to load with header and sep options
+unzip("activity.zip")
 activity <- read.csv(file="activity.csv", header=TRUE, sep=",")
 ```
 
@@ -98,7 +93,7 @@ legend('topright', cex = .75, lty = 1, lwd = 3, col = c("green", "red"),
 )
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
 
 #### III. What is the average daily activity pattern?
 
@@ -127,12 +122,12 @@ max_steps_annotate <- paste("Average max steps of", format(round(Max_steps$steps
 
 p <- ggplot(activity_dailyavg_byinterval, aes(interval, steps))
 p + geom_line() + 
-        geom_hline(yintercept = max(activity_dailyavg_byinterval$steps), color="blue") + 
+        geom_hline(yintercept = max(activity_dailyavg_byinterval$steps), color="blue", linetype="dotted") + 
         geom_text(x = 1650, y = 200, color = "blue", label = max_steps_annotate, size=4) +
-        geom_vline(xintercept = Max_steps$interval, color = "blue")
+        geom_vline(xintercept = Max_steps$interval, color = "blue", linetype="dotted")
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
 
 ```r
 print(max_steps_annotate)
@@ -265,7 +260,7 @@ legend('topright', cex = .75, lty = 1, lwd = 3, col = c("green", "red"),
 )
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
 
 ```r
 meandiff <- mean_dailysteps - newmean_dailysteps
@@ -333,3 +328,15 @@ For this part the weekdays() function may be of some help here. Use the dataset 
 
 
 
+```r
+## add new column and identify as weekday vs weekend
+activity_noNA$weekday <- ifelse(weekdays(as.Date(activity_noNA$date)) %in% c("Saturday", "Sunday"), "weekend", "weekday")
+## factorize weekday into factor with 2 levels "weekday" and "weekend"
+activity_noNA <- transform(activity_noNA, weekday = factor(weekday))
+## aggregate by interval for weekdays and weekends
+activity_noNA_intervalavgbyweekend <- aggregate(steps ~ interval + weekday, data=activity_noNA, mean)
+## plot in facet plot showing comparison of weekday vs weekend interval averages
+ggplot(activity_noNA_intervalavgbyweekend, aes(interval, steps, color=weekday)) + geom_line() + facet_grid(weekday ~ .) + xlab("Interval") + ylab("Average Number of Steps") + guides(color=FALSE)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
